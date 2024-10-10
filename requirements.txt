@@ -1,3 +1,7 @@
+cv2
+messages
+math
+time
 pandas
 numpy
 -e .
