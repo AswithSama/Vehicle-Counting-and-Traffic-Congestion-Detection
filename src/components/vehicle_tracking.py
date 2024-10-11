@@ -4,7 +4,7 @@ import os
 from exception import CustomException
 # Assuming 'utils.py' is in a directory one level above your current working directory
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
+from logger import logging
 def track_objects(no_of_frames, center_points_prev_frame, center_points_cur_frame, tracking_objects, object_id):
     try:
         if no_of_frames <= 2:
@@ -34,5 +34,6 @@ def track_objects(no_of_frames, center_points_prev_frame, center_points_cur_fram
                 object_id += 1
         return tracking_objects, object_id
     except Exception as e:
+        logging.info('error occured in vehicle tracking part')
         raise CustomException(e,sys)
 

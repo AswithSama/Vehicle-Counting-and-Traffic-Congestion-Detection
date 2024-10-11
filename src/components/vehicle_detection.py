@@ -5,6 +5,7 @@ import os
 from exception import CustomException
 # Assuming 'utils.py' is in a directory one level above your current working directory
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from logger import logging
 
 def yolo_object_detection(network, layersOutput, frame, prob_min, threshold):
     try:
@@ -33,5 +34,6 @@ def yolo_object_detection(network, layersOutput, frame, prob_min, threshold):
         results = cv.dnn.NMSBoxes(bounding_boxes, confidences, prob_min, threshold)
         return results, bounding_boxes, class_numbers
     except Exception as e:
+        logging.info('error occured in vehicle detection part')
         raise CustomException(e,sys)
         

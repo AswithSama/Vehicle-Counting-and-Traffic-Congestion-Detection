@@ -4,6 +4,7 @@ import sys
 import os
 # Assuming 'utils.py' is in a directory one level above your current working directory
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from logger import logging
 from exception import CustomException
 from logger import logging
 
@@ -21,4 +22,5 @@ def initialize_video_and_network(video_path, cfg_path, weights_path, coco_names_
 
         return video, network, layersOutput, labels
     except Exception as e:
+        logging.info('error in initialization part')
         raise CustomException(e,sys)

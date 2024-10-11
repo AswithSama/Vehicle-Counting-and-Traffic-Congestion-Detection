@@ -4,6 +4,7 @@ import os
 from exception import CustomException
 # Assuming 'utils.py' is in a directory one level above your current working directory
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from logger import logging
 def count_vehicles(frame, tracking_objects, count_list, counting_number_of_vehicles, for_counting_unique_vehicles, y_coordinate, car_count, bike_count, bus_count, truck_count):
     try:
         cv.line(frame,(0,frame.shape[0]-200),(frame.shape[1],frame.shape[0]-200),(0,0,255),2)
@@ -27,4 +28,5 @@ def count_vehicles(frame, tracking_objects, count_list, counting_number_of_vehic
                 cv.line(frame, (0, y_coordinate), (frame.shape[1], y_coordinate), (0, 255, 0), 2)
         return counting_number_of_vehicles, car_count, bike_count, bus_count, truck_count
     except Exception as e:
+        logging.info('error occured in vehicle counting part')
         raise CustomException(e,sys)
