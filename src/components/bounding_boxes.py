@@ -4,6 +4,7 @@ import os
 from exception import CustomException
 # Assuming 'utils.py' is in a directory one level above your current working directory
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from logger import logging
 def draw_bounding_boxes(frame, results, bounding_boxes, class_numbers, labels, colours, center_points_cur_frame, for_counting_unique_vehicles):
     try:
         if len(results)==0:
@@ -22,5 +23,6 @@ def draw_bounding_boxes(frame, results, bounding_boxes, class_numbers, labels, c
                 text_box_current = '{}'.format(labels[int(class_numbers[i])])
                 cv.putText(frame, text_box_current, (x_min - 5, y_min), cv.FONT_HERSHEY_COMPLEX, 0.7, color_box_current, 2)
         return center_points_cur_frame
-    except:
+    except Exception as e:
+        logging.info('error occured in creating bounding boxes')
         raise CustomException(e,sys)
