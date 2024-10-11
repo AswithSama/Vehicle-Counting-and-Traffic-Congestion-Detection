@@ -2,10 +2,11 @@ import cv2 as cv
 import numpy as np
 import sys
 import os
-from logger import logging
 # Assuming 'utils.py' is in a directory one level above your current working directory
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from exception import CustomException
+from logger import logging
+
 def initialize_video_and_network(video_path, cfg_path, weights_path, coco_names_path):
     try:
         video = cv.VideoCapture(video_path)

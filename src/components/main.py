@@ -8,9 +8,10 @@ from bounding_boxes import draw_bounding_boxes
 from exception import CustomException
 import sys
 import os
-
 # Assuming 'utils.py' is in a directory one level above your current working directory
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from logger import logging
+
 #data_path='src/components/Data'
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -32,6 +33,7 @@ def main():
             return
         
         # Variables initialization
+        flag=0
         prob_min = 0.5
         threshold = 0.3
         colours = np.random.randint(0, 255, size=(len(labels), 3), dtype='uint8')
@@ -67,12 +69,17 @@ def main():
             cv.imshow('frame',frame)
             center_points_prev_frame = center_points_cur_frame.copy()
             if cv.waitKey(1) & 0xFF == ord('q'):
+                flag=1
+                logging.info('Video stopped in the middle due to the user interruption')
                 break
         cv.waitKey(0)
+        if flag==0:
+                logging.info('Successfully completed the entire video')
+        cv.destroyAllWindows()
     except Exception as e:
         raise CustomException(e,sys)
 
-        cv.destroyAllWindows()
+        
 
 
 if __name__ == "__main__":

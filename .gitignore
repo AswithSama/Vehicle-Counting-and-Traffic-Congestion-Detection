@@ -36,6 +36,7 @@ MANIFEST
 # YOLOv3 files
 src/Data/yolov3.cfg
 src/Data/coco.names
+src/Data/yolov3.weights
 
 # Installer logs
 pip-log.txt
