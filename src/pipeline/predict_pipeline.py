@@ -102,7 +102,7 @@ def process_video(input_path: Path, output_dir: Path, options: ProcessingOptions
             tracks = tracker.update(detector.detect(frame))
             result = monitor.update(video_seconds, tracks, frame.shape)
             line_y, roi = monitor.geometry(frame.shape)
-            draw_overlay(frame, tracks, result, line_y, roi)
+            draw_overlay(frame, tracks, result, line_y, roi, monitor.counted_ids)
             if result["event"] is not None:
                 event = {"type": result["event"], "timestamp_seconds": result["timestamp_seconds"],
                          "occupancy": result["occupancy"], "total_line_crossings": result["total_line_crossings"]}
