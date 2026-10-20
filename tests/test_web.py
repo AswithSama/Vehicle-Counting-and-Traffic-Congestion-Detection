@@ -10,6 +10,7 @@ def test_dashboard_and_video_upload_integration(tmp_path):
         assert options.live_sms is False
         progress(10,10)
         (output_dir/'counts.csv').write_text('timestamp_seconds,occupancy\n0,3\n')
+        (output_dir/'preview.jpg').write_bytes(b'fake jpeg')
         return {'cumulative_crossings':1, 'congestion_events':0, 'video':'annotated.mp4'}
     client=TestClient(create_app(output_root=tmp_path,processor=fake_processor))
     assert client.get('/').status_code==200
@@ -21,6 +22,11 @@ def test_dashboard_and_video_upload_integration(tmp_path):
     assert job['status']=='completed'
     assert job['summary']['cumulative_crossings']==1
     assert client.get(f'/api/jobs/{jobid}/files/counts.csv').status_code==200
+    preview = client.get(f'/api/jobs/{jobid}/preview')
+    assert preview.status_code == 200
+    assert preview.content == b'fake jpeg'
+    assert 'no-store' in preview.headers['cache-control']
+    assert client.get('/api/jobs/missing/preview').status_code == 404
     assert client.get(f'/api/jobs/{jobid}/files/../../.env').status_code in (400,404)
 
 

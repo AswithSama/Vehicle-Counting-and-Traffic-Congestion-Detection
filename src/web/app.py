@@ -139,6 +139,20 @@ def create_app(*, output_root: Path | None = None, processor=process_video) -> F
                 raise HTTPException(status_code=404, detail="Job not found; jobs are stored in memory until server restarts")
             return dict(result)
 
+    @app.get("/api/jobs/{job_id}/preview")
+    def live_preview(job_id: str):
+        """Serve the most recent completed annotated frame while processing."""
+        with lock:
+            state = jobs.get(job_id)
+            if state is None:
+                raise HTTPException(status_code=404, detail="Job not found")
+            if state["status"] not in {"processing", "completed"}:
+                raise HTTPException(status_code=404, detail="No preview available yet")
+        preview = root / job_id / "preview.jpg"
+        if not preview.is_file():
+            raise HTTPException(status_code=404, detail="First frame is not ready")
+        return FileResponse(preview, media_type="image/jpeg", headers={"Cache-Control": "no-store, max-age=0"})
+
     @app.get("/api/jobs/{job_id}/files/{filename}")
     def artifact(job_id: str, filename: str):
         with lock:

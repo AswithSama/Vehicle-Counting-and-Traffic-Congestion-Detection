@@ -118,8 +118,11 @@ def process_video(input_path: Path, output_dir: Path, options: ProcessingOptions
                     "timestamp_seconds", "occupancy", "total_line_crossings", "congested", "above_threshold_seconds")})
                 last_saved_second = current_second
             writer.write(frame)
-            if frame_index == 0 or frame_index % 20 == 0:
-                cv2.imwrite(str(output_dir / "preview.jpg"), frame)
+            if frame_index % 5 == 0:
+                # Write then atomically replace so browser never reads half a JPEG.
+                pending = output_dir / "preview_pending.jpg"
+                if cv2.imwrite(str(pending), frame):
+                    pending.replace(output_dir / "preview.jpg")
             frame_index += 1
             last_result = result
             if progress is not None and (frame_index == 1 or frame_index % 20 == 0):

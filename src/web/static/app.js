@@ -9,6 +9,39 @@ const resultsArea = document.querySelector('#results');
 const blankArea = document.querySelector('#empty');
 const byId = id => document.getElementById(id);
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const liveFrame = byId('liveFrame');
+const liveWaiting = byId('liveWaiting');
+let previewTimer = null;
+function stopLivePreview() {
+  if (previewTimer !== null) clearInterval(previewTimer);
+  previewTimer = null;
+}
+function startLivePreview(job) {
+  stopLivePreview();
+  liveFrame.hidden = true;
+  liveWaiting.hidden = false;
+  // An image request is cheap and avoids the complexity of a streaming server.
+  const refresh = async () => {
+    if (liveFrame.dataset.loading === '1') return;
+    liveFrame.dataset.loading = '1';
+    try {
+      const response = await fetch(`/api/jobs/${encodeURIComponent(job)}/preview?t=${Date.now()}`, {cache:'no-store'});
+      if (!response.ok) return;
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const old = liveFrame.dataset.objectUrl;
+      liveFrame.src = url;
+      liveFrame.dataset.objectUrl = url;
+      liveFrame.hidden = false;
+      liveWaiting.hidden = true;
+      if (old) URL.revokeObjectURL(old);
+    } catch (_) { /* First frame may not be ready yet. */ }
+    finally { liveFrame.dataset.loading = '0'; }
+  };
+  refresh();
+  previewTimer = setInterval(refresh, 500);
+}
+
 function escapeText(value) { return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 fileInput.addEventListener('change', () => {
   byId('upload-label').textContent = fileInput.files[0]?.name || 'Choose your traffic video';
@@ -41,6 +74,7 @@ form.addEventListener('submit', async event => {
     const data = await response.json();
     if (!response.ok) throw new Error(typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail));
     const job = data.job_id;
+    startLivePreview(job);
     while (true) {
       await sleep(1200);
       const statusResponse = await fetch(`/api/jobs/${encodeURIComponent(job)}`);
@@ -56,5 +90,5 @@ form.addEventListener('submit', async event => {
   } catch (error) {
     state.textContent = 'ERROR'; errorBox.hidden = false; errorBox.textContent = error.message;
     progressArea.hidden = true;
-  } finally { button.disabled = false; }
+  } finally { stopLivePreview(); button.disabled = false; }
 });
