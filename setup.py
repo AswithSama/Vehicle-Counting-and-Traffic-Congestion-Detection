@@ -1,23 +1,12 @@
-from setuptools import find_packages,setup
-from typing import List
-
-def get_requirements(file_path):
-    requirements=[]
-    with open(file_path) as file_obj:
-        requirements=file_obj.readlines()
-        requirements=[req.replace("\n","") for req in requirements]
-
-        if '-e .' in requirements:
-            requirements.remove('-e .')
-    
-    return requirements
+from setuptools import find_packages, setup
 
 setup(
-    name='Vehicle Couting and Traffic Congestion Detection',
-    version='0.0.1',
-    author='Aswith Sama',
-    author_email='samaaswith7@gmail.com',
+    name="vehicle-traffic-monitor",
+    version="1.0.0",
+    description="YOLOv3 road traffic counting and sustained-congestion SMS alerts",
     packages=find_packages(),
-    install_requires=get_requirements('requirements.txt')
-     
+    install_requires=[
+        line.strip() for line in open("requirements.txt", encoding="utf-8")
+        if line.strip() and not line.startswith("#")
+    ],
 )

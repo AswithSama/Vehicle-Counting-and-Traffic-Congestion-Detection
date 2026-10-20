@@ -1,26 +1,24 @@
-import cv2 as cv
-import numpy as np
-import sys
-import os
-# Assuming 'utils.py' is in a directory one level above your current working directory
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from logger import logging
-from exception import CustomException
-from logger import logging
+"""Load legacy Darknet YOLOv3 weights/config into OpenCV DNN."""
+from pathlib import Path
+import cv2
 
-def initialize_video_and_network(video_path, cfg_path, weights_path, coco_names_path):
-    try:
-        video = cv.VideoCapture(video_path)
-        logging.info("Successfully loaded the video")
-        video.set(cv.CAP_PROP_FPS, int(10))
-        fps = video.get(cv.CAP_PROP_FPS)
-        with open(coco_names_path) as f:
-            labels = [line.strip() for line in f]
-        network = cv.dnn.readNetFromDarknet(cfg_path, weights_path)
-        layersNames = network.getLayerNames()
-        layersOutput = [layersNames[i - 1] for i in network.getUnconnectedOutLayers()]
+DEFAULT_MODEL_DIR = Path(__file__).resolve().parents[1] / "Data"
 
-        return video, network, layersOutput, labels
-    except Exception as e:
-        logging.info('error in initialization part')
-        raise CustomException(e,sys)
+
+def load_network(model_dir: Path = DEFAULT_MODEL_DIR):
+    model_dir = Path(model_dir)
+    weights = model_dir / "yolov3.weights"
+    cfg = model_dir / "yolov3.cfg"
+    names = model_dir / "coco.names"
+    missing = [p.name for p in (weights, cfg, names) if not p.is_file()]
+    if missing:
+        raise FileNotFoundError(
+            f"Missing YOLOv3 assets: {', '.join(missing)} in {model_dir}. "
+            "Run: python -m src.download_models"
+        )
+    labels = names.read_text(encoding="utf-8").splitlines()
+    if len(labels) <= 7:
+        raise ValueError("coco.names is missing expected COCO class labels")
+    net = cv2.dnn.readNetFromDarknet(str(cfg), str(weights))
+    layers = net.getUnconnectedOutLayersNames()
+    return net, layers, labels
