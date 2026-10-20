@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RoadWatch — Traffic Intelligence Studio</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-icon">R</span><span>ROADWATCH <small>TRAFFIC INTELLIGENCE</small></span></div>
+      <div class="top-meta"><span class="pulse"></span> LOCAL VIDEO ANALYTICS <span class="separator">·</span> YOLOv3 / OPEN-CV</div>
+    </header>
+    <section class="intro">
+      <div class="eyebrow">AUTOMATED TRAFFIC MONITORING <span class="line"></span> 01 / 03</div>
+      <h1>From traffic footage<br>to <em>actionable signals.</em></h1>
+      <p>Detect and classify vehicles. Measure the difference between vehicles passing through and vehicles staying in a road segment. Generate a congestion alert when occupancy stays high.</p>
+      <div class="features"><span>01 &nbsp; VEHICLE DETECTION</span><span>02 &nbsp; TWO COUNT TYPES</span><span>03 &nbsp; SMS ALERTS</span></div>
+    </section>
+    <main class="workspace">
+      <section class="panel configure">
+        <div class="panel-head"><span>01 — CONFIGURATION</span><span class="tag">LOCAL PROCESSING</span></div>
+        <form id="jobForm">
+          <label class="upload" for="video"><span class="upload-ico">↥</span><strong id="upload-label">Choose your traffic video</strong><span>MP4 / AVI / MOV / MKV · Maximum {{ max_upload_mb }} MB</span><input type="file" name="video" id="video" accept=".mp4,.avi,.mov,.mkv" required></label>
+          <label>ROAD SEGMENT NAME <input name="road_name" value="Road Segment A" maxlength="80" required></label>
+          <div class="split">
+            <label>OCCUPANCY THRESHOLD <input name="threshold" type="number" min="1" step="1" value="25" required></label>
+            <label>PERSISTENCE (SECONDS) <input name="duration" type="number" min="0" step="0.1" value="180" required></label>
+          </div>
+          <div class="split">
+            <label>RECOVERY (SECONDS) <input name="recovery" type="number" min="0" step="0.1" value="10" required></label>
+            <label>MODEL CONFIDENCE <input name="confidence" type="number" min="0.01" max="1" step="0.05" value="0.5" required></label>
+          </div>
+          <label>COUNTING LINE — IMAGE HEIGHT (%) <input name="line_fraction" type="number" min="0.01" max="0.99" step="0.05" value="0.65" required></label>
+          <div class="subhead">MONITORED REGION <small>FRACTIONS OF FRAME (0–1)</small></div>
+          <div class="quad">
+            <label>LEFT <input name="roi_x1" type="number" min="0" max="1" step="0.05" value="0"></label>
+            <label>TOP <input name="roi_y1" type="number" min="0" max="1" step="0.05" value="0"></label>
+            <label>RIGHT <input name="roi_x2" type="number" min="0" max="1" step="0.05" value="1"></label>
+            <label>BOTTOM <input name="roi_y2" type="number" min="0" max="1" step="0.05" value="1"></label>
+          </div>
+          <div class="alert-options"><label class="check"><input type="checkbox" name="live_sms" value="true" {% if not twilio_ready %}disabled{% endif %}><span><strong>Send real Twilio SMS on congestion</strong><small>{% if twilio_ready %}Credentials found. Requires explicit opt-in.{% else %}Preview only. To enable SMS, configure .env and restart.{% endif %}</small></span></label></div>
+          <button id="run" type="submit">PROCESS TRAFFIC VIDEO <span>↗</span></button>
+        </form>
+        <div class="under-note">The threshold uses vehicles present simultaneously in the ROI, not the cumulative crossing total. For a quick test, use a smaller threshold and 2–5 second duration.</div>
+      </section>
+      <section class="panel output">
+        <div class="panel-head"><span>02 — ANALYSIS OUTPUT</span><span class="tag" id="jobStatus">AWAITING INPUT</span></div>
+        <div id="empty" class="empty"><div class="visual">▥</div><h2>Ready for footage.</h2><p>Upload a video to generate an annotated recording, traffic-count timeline, event screenshots, and SMS alert log.</p></div>
+        <div id="results" hidden>
+          <div class="metrics"><div><small>LINE CROSSINGS</small><strong id="crossings">–</strong></div><div><small>CONGESTION EVENTS</small><strong id="congestions">–</strong></div><div><small>VIDEO DURATION</small><strong id="duration">–</strong></div></div>
+          <div id="display"><video id="player" controls playsinline preload="metadata" muted></video><img id="preview" alt="Annotated traffic preview" hidden><small>Can't play the video? Download it below. Browser playback is best with ffmpeg installed.</small></div>
+          <div class="subhead">TRAFFIC BREAKDOWN</div><div id="breakdown" class="breakdown"></div>
+          <div class="subhead">CONGESTION & ALERT HISTORY</div><div id="events" class="history"></div>
+          <div class="subhead">ARTIFACTS</div><div id="downloads" class="downloads"></div>
+        </div>
+        <div id="progress" hidden><div class="loader"><div id="progressFill"></div></div><p id="progressText">Starting analysis…</p></div>
+        <div id="error" role="alert" hidden></div>
+      </section>
+    </main>
+    <footer>ROADWATCH / YOLOv3 PROTOTYPE <span>Traffic congestion is an occupancy-based approximation and requires human verification.</span></footer>
+  </div>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>
