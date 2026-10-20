@@ -1,28 +1,31 @@
-import cv2 as cv
-import sys
-import os
-from exception import CustomException
-# Assuming 'utils.py' is in a directory one level above your current working directory
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from logger import logging
-def draw_bounding_boxes(frame, results, bounding_boxes, class_numbers, labels, colours, center_points_cur_frame, for_counting_unique_vehicles):
-    try:
-        if len(results)==0:
-            return None
-        for i in results.flatten():
-            if int(class_numbers[i]) in [2, 3, 5, 7]:  # Filtering specific vehicle classes
-                x_min, y_min = bounding_boxes[i][0], bounding_boxes[i][1]
-                box_width, box_height = bounding_boxes[i][2], bounding_boxes[i][3]
-                x_center = x_min + int(box_width / 2)
-                y_center = y_min + int(box_height / 2)
-                color_box_current = colours[class_numbers[i]].tolist()
-                cv.rectangle(frame, (x_min, y_min), (x_min + box_width, y_min + box_height), color_box_current, 2)
-                cv.circle(frame, (x_center, y_center), 4, (0, 0, 255), -1)
-                center_points_cur_frame.append((x_center, y_center))
-                for_counting_unique_vehicles.append(((x_center, y_center), int(class_numbers[i])))
-                text_box_current = '{}'.format(labels[int(class_numbers[i])])
-                cv.putText(frame, text_box_current, (x_min - 5, y_min), cv.FONT_HERSHEY_COMPLEX, 0.7, color_box_current, 2)
-        return center_points_cur_frame
-    except Exception as e:
-        logging.info('error occured in creating bounding boxes')
-        raise CustomException(e,sys)
+"""Overlay vehicle boxes, ROI, crossing line, and live traffic counters."""
+import cv2
+from src.components.models import VEHICLE_LABELS
+
+COLORS = {2: (88, 203, 255), 3: (240, 196, 94), 5: (138, 212, 139), 7: (210, 146, 235)}
+
+
+def draw_overlay(frame, tracks, result, line_y: int, roi: tuple[int, int, int, int]):
+    x1, y1, x2, y2 = roi
+    cv2.rectangle(frame, (x1, y1), (x2, y2), (90, 196, 248), 2)
+    cv2.line(frame, (0, line_y), (frame.shape[1] - 1, line_y), (245, 200, 100), 2)
+    cv2.putText(frame, "ROI", (x1 + 4, min(frame.shape[0] - 5, y1 + 20)), cv2.FONT_HERSHEY_SIMPLEX, .55, (90, 196, 248), 2)
+    for track_id, track in tracks.items():
+        bx, by, bw, bh = track.box
+        color = COLORS.get(track.class_id, (255, 255, 255))
+        cv2.rectangle(frame, (bx, by), (bx + bw, by + bh), color, 2)
+        title = f"#{track_id} {VEHICLE_LABELS[track.class_id]} {track.confidence:.2f}"
+        cv2.putText(frame, title, (bx, max(18, by - 8)), cv2.FONT_HERSHEY_SIMPLEX, .48, color, 2)
+        cv2.circle(frame, track.center, 3, color, -1)
+    h, w = frame.shape[:2]
+    layer = frame.copy()
+    cv2.rectangle(layer, (0, 0), (min(w, 445), min(h, 126)), (20, 25, 37), -1)
+    cv2.addWeighted(layer, .72, frame, .28, 0, frame)
+    lines = [
+        f"In ROI: {result['occupancy']}  |  Line crossings: {result['total_line_crossings']}",
+        f"Traffic: {'CONGESTED' if result['congested'] else 'monitoring'}",
+        f"Time: {result['timestamp_seconds']:.1f}s | Threshold: {result['threshold']}",
+    ]
+    for i, line in enumerate(lines):
+        cv2.putText(frame, line, (12, 32 + 35 * i), cv2.FONT_HERSHEY_SIMPLEX, .54, (255, 255, 255), 2)
+    return frame
