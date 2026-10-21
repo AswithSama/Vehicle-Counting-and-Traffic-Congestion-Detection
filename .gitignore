@@ -184,3 +184,12 @@ cython_debug/
 *.avi
 *.mov
 *.mkv
+
+# macOS metadata
+.DS_Store
+
+# Temporary portfolio generation files
+/portfolio/
+/export_portfolio.py
+/finalize_portfolio.py
+/refresh_readme_assets.py

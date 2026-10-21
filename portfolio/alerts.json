@@ -1,9 +1,0 @@
-[
-  {
-    "at_seconds": 3.0,
-    "mode": "LIVE",
-    "message": "TRAFFIC CONGESTION ALERT\nLocation: Road Segment A\nVehicles currently in ROI: 22\nThreshold: 2 for 3s\nVideo timestamp: 3.0s\nPlease review the road camera and investigate.",
-    "status": "send_failed",
-    "error": "Twilio request failed; verify account, sender, recipient and provider logs"
-  }
-]
