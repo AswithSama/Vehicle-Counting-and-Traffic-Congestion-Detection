@@ -1,5 +1,65 @@
 # RoadWatch — Vehicle Counting & Sustained Traffic Congestion Alerts
 
+<!-- ROADWATCH_SHOWCASE_START -->
+
+## Demo — Input to Output
+
+RoadWatch processes recorded traffic footage using YOLOv3 and OpenCV.
+It detects, classifies, and tracks vehicles, counts unique line crossings,
+and monitors sustained road occupancy to identify potential congestion.
+
+### Input and Annotated Output
+
+| Original traffic footage | Processed vehicle detection |
+| --- | --- |
+| `14828714_1080_1920_30fps.mp4` — original traffic footage | ![Annotated traffic footage](docs/assets/annotated_frame.jpg) |
+
+### Live Vehicle Detection and Counting
+
+The following **10-second GIF** demonstrates annotated video output,
+class-aware bounding boxes, vehicle tracking, and traffic counters.
+
+![RoadWatch 10-second demonstration](docs/assets/roadwatch_demo.gif)
+
+**Vehicle colors:** Blue = Car, Purple = Motorcycle,
+Orange = Bus, Green = Truck, Yellow = Counted after line crossing.
+
+### Congestion Detection
+
+RoadWatch monitors the number of vehicles simultaneously present
+inside a configured region of interest (ROI). If the occupancy
+threshold remains exceeded for the configured duration,
+a potential congestion event is recorded.
+
+![Congestion event evidence](docs/assets/congestion_event.jpg)
+
+### Automated Twilio SMS Alert
+
+When a congestion event is detected, RoadWatch generates an
+SMS notification containing the road name, vehicle occupancy,
+threshold, and video timestamp.
+
+![Twilio SMS alert preview](docs/assets/twilio_alert_preview.png)
+
+**Integration status:** The application successfully submitted an
+SMS request to Twilio. Actual carrier delivery was blocked by
+US A2P 10DLC registration requirements (Twilio error 30034).
+The image above is an illustrative alert preview, not proof
+of delivery to a mobile device.
+
+### Technical Details
+
+- **Detection:** YOLOv3 with OpenCV DNN
+- **Tracking:** Vehicle identity association and class-aware tracking
+- **Counting:** Unique tracked vehicles crossing a virtual line
+- **Congestion:** Sustained occupancy within a configurable ROI
+- **Backend:** FastAPI
+- **Notifications:** Twilio SMS integration
+- **Evidence:** Annotated video, event screenshots, CSV, and JSON reports
+
+<!-- ROADWATCH_SHOWCASE_END -->
+
+
 A local, browser-based traffic-video analytics prototype. It extends the original YOLOv3 / OpenCV vehicle-counting code into a complete **recorded video → detect & classify → track → two independent counts → duration-based congestion event → Twilio SMS** pipeline.
 
 **Status:** end-to-end software flow implemented and offline-tested with synthetic detections. **Actual YOLOv3 inference on your road footage and delivery to a real phone are not yet verified.** These require a local download of the pretrained model, a real video, and optional personal Twilio credentials. The app does **not** retrain YOLOv3 or claim to measure vehicle speed.

@@ -2,8 +2,14 @@
 import cv2
 from src.components.models import VEHICLE_LABELS
 
-UNCROSSED_COLOR = (255, 160, 60)  # BGR blue
-CROSSED_COLOR = (0, 255, 255)  # BGR yellow
+# OpenCV colors use BGR (blue, green, red), not RGB.
+VEHICLE_COLORS = {
+    2: (246, 130, 59),   # Car: blue
+    3: (247, 85, 168),   # Motorcycle: purple
+    5: (22, 115, 249),   # Bus: orange
+    7: (94, 197, 34),   # Truck: green
+}
+CROSSED_COLOR = (0, 255, 255)  # Yellow for any vehicle already counted
 
 
 def draw_overlay(frame, tracks, result, line_y: int, roi: tuple[int, int, int, int], counted_ids=None):
@@ -14,7 +20,7 @@ def draw_overlay(frame, tracks, result, line_y: int, roi: tuple[int, int, int, i
     cv2.putText(frame, "ROI", (x1 + 4, min(frame.shape[0] - 5, y1 + 20)), cv2.FONT_HERSHEY_SIMPLEX, .55, (90, 196, 248), 2)
     for track_id, track in tracks.items():
         bx, by, bw, bh = track.box
-        color = CROSSED_COLOR if track_id in counted_ids else UNCROSSED_COLOR
+        color = CROSSED_COLOR if track_id in counted_ids else VEHICLE_COLORS.get(track.class_id, (255, 255, 255))
         cv2.rectangle(frame, (bx, by), (bx + bw, by + bh), color, 2)
         title = f"#{track_id} {VEHICLE_LABELS[track.class_id]} {track.confidence:.2f}"
         cv2.putText(frame, title, (bx, max(18, by - 8)), cv2.FONT_HERSHEY_SIMPLEX, .48, color, 2)

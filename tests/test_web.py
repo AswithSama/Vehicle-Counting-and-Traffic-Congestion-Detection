@@ -30,7 +30,9 @@ def test_dashboard_and_video_upload_integration(tmp_path):
     assert client.get(f'/api/jobs/{jobid}/files/../../.env').status_code in (400,404)
 
 
-def test_invalid_parameters_and_upload_rejected(tmp_path):
+def test_invalid_parameters_and_upload_rejected(tmp_path, monkeypatch):
+    # Simulate missing Twilio credentials independently of local .env.
+    monkeypatch.setattr("src.web.app.configured", lambda: False)
     client=TestClient(create_app(output_root=tmp_path))
     assert client.post('/api/jobs',data={'threshold':'0'},files={'video':('r.mp4',b'xx')}).status_code==422
     assert client.post('/api/jobs',files={'video':('bad.txt',b'xx')}).status_code==422

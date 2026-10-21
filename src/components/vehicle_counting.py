@@ -57,10 +57,13 @@ class TrafficMonitor:
         for track_id, track in tracks.items():
             if x1 <= track.x <= x2 and y1 <= track.y <= y2:
                 current_by_class[track.class_id] += 1
+            # Use the bottom-center (road contact) rather than box center.
+            # This corresponds more closely to visually crossing the line.
+            foot_y = track.box[1] + track.box[3]
             side = 0
-            if track.y < line_y - self.config.line_margin_px:
+            if foot_y < line_y - self.config.line_margin_px:
                 side = -1
-            elif track.y > line_y + self.config.line_margin_px:
+            elif foot_y > line_y + self.config.line_margin_px:
                 side = 1
             if side:
                 previous_side = self.seen_side.get(track_id)
