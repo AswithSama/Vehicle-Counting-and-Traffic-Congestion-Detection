@@ -44,7 +44,7 @@ SMS notification containing the road name, vehicle occupancy,
 threshold, and video timestamp.
 
 <p align="center">
-  <img src="docs/assets/twilio_sms_mockup.png" alt="Twilio SMS alert preview" width="35%" />
+  <img src="docs/assets/twilio_sms_mockup.png" alt="RoadWatch SMS alert example (mockup)" width="45%" />
 </p>
 
 **Integration status:** RoadWatch supports Twilio-based SMS alert generation
