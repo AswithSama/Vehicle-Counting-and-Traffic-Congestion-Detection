@@ -12,14 +12,16 @@ and monitors sustained road occupancy to identify potential congestion.
 
 | Original traffic footage | Processed vehicle detection |
 | --- | --- |
-| `14828714_1080_1920_30fps.mp4` — original traffic footage | ![Annotated traffic footage](docs/assets/annotated_frame.jpg) |
+| `14828714_1080_1920_30fps.mp4` — original traffic footage | <img src="docs/assets/annotated_frame.jpg" alt="Annotated traffic footage" width="320" /> |
 
 ### Live Vehicle Detection and Counting
 
 The following **10-second GIF** demonstrates annotated video output,
 class-aware bounding boxes, vehicle tracking, and traffic counters.
 
-![RoadWatch 10-second demonstration](docs/assets/roadwatch_demo.gif)
+<p align="center">
+  <img src="docs/assets/roadwatch_demo.gif" alt="RoadWatch 10-second demonstration" width="55%" />
+</p>
 
 **Vehicle colors:** Blue = Car, Purple = Motorcycle,
 Orange = Bus, Green = Truck, Yellow = Counted after line crossing.
@@ -31,7 +33,9 @@ inside a configured region of interest (ROI). If the occupancy
 threshold remains exceeded for the configured duration,
 a potential congestion event is recorded.
 
-![Congestion event evidence](docs/assets/congestion_event.jpg)
+<p align="center">
+  <img src="docs/assets/congestion_event.jpg" alt="Congestion event evidence" width="40%" />
+</p>
 
 ### Automated Twilio SMS Alert
 
@@ -39,7 +43,9 @@ When a congestion event is detected, RoadWatch generates an
 SMS notification containing the road name, vehicle occupancy,
 threshold, and video timestamp.
 
-![Twilio SMS alert preview](docs/assets/twilio_alert_preview.png)
+<p align="center">
+  <img src="docs/assets/twilio_alert_preview.png" alt="Twilio SMS alert preview" width="35%" />
+</p>
 
 **Integration status:** The application successfully submitted an
 SMS request to Twilio. Actual carrier delivery was blocked by
