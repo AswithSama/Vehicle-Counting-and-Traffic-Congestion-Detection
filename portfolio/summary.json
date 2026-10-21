@@ -1,0 +1,61 @@
+{
+  "road_name": "Road Segment A",
+  "duration_seconds": 16.133,
+  "fps": 30.0,
+  "processed_frames": 484,
+  "final_occupancy": 16,
+  "cumulative_crossings": 38,
+  "flow_by_class": {
+    "car": 16,
+    "motorcycle": 10,
+    "bus": 1,
+    "truck": 11
+  },
+  "last_occupancy_by_class": {
+    "car": 10,
+    "motorcycle": 3,
+    "bus": 0,
+    "truck": 3
+  },
+  "congestion_events": 1,
+  "sms_mode": "LIVE",
+  "alerts": [
+    {
+      "at_seconds": 3.0,
+      "mode": "LIVE",
+      "message": "TRAFFIC CONGESTION ALERT\nLocation: Road Segment A\nVehicles currently in ROI: 22\nThreshold: 2 for 3s\nVideo timestamp: 3.0s\nPlease review the road camera and investigate.",
+      "status": "send_failed",
+      "error": "Twilio request failed; verify account, sender, recipient and provider logs"
+    }
+  ],
+  "events": [
+    {
+      "type": "CONGESTION_STARTED",
+      "timestamp_seconds": 3.0,
+      "occupancy": 22,
+      "total_line_crossings": 7,
+      "alert": {
+        "at_seconds": 3.0,
+        "mode": "LIVE",
+        "message": "TRAFFIC CONGESTION ALERT\nLocation: Road Segment A\nVehicles currently in ROI: 22\nThreshold: 2 for 3s\nVideo timestamp: 3.0s\nPlease review the road camera and investigate.",
+        "status": "send_failed",
+        "error": "Twilio request failed; verify account, sender, recipient and provider logs"
+      },
+      "screenshot": "event_001.jpg"
+    }
+  ],
+  "video": "annotated.mp4",
+  "congestion_config": {
+    "occupancy_threshold": 2,
+    "persistence_seconds": 3.0,
+    "recovery_seconds": 2.0,
+    "line_y_fraction": 0.81,
+    "roi": [
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ]
+  },
+  "notes": "Congestion is inferred from sustained ROI occupancy, not measured vehicle speed."
+}
