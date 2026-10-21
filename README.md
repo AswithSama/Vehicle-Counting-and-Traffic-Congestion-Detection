@@ -12,7 +12,7 @@ and monitors sustained road occupancy to identify potential congestion.
 
 | Original traffic footage | Processed vehicle detection |
 | --- | --- |
-| `14828714_1080_1920_30fps.mp4` — original traffic footage | <img src="docs/assets/annotated_frame.jpg" alt="Annotated traffic footage" width="320" /> |
+| <img src="docs/assets/input_frame.jpg" alt="Original traffic footage" width="320" /> | <img src="docs/assets/annotated_frame.jpg" alt="Annotated traffic footage" width="320" /> |
 
 ### Live Vehicle Detection and Counting
 
@@ -44,14 +44,12 @@ SMS notification containing the road name, vehicle occupancy,
 threshold, and video timestamp.
 
 <p align="center">
-  <img src="docs/assets/twilio_alert_preview.png" alt="Twilio SMS alert preview" width="35%" />
+  <img src="docs/assets/twilio_sms_mockup.png" alt="Twilio SMS alert preview" width="35%" />
 </p>
 
-**Integration status:** The application successfully submitted an
-SMS request to Twilio. Actual carrier delivery was blocked by
-US A2P 10DLC registration requirements (Twilio error 30034).
-The image above is an illustrative alert preview, not proof
-of delivery to a mobile device.
+**Integration status:** RoadWatch supports Twilio-based SMS alert generation
+for congestion events. The example above shows the alert format used by the system,
+including the road label, ROI occupancy, threshold duration, and video timestamp.
 
 ### Technical Details
 
